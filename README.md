@@ -1,6 +1,6 @@
-# SPDM-WID, a Wireshark Dissector
+# SPDM-WiD, a Wireshark Dissector
 
-SPDM-WID is a dissector for Wireshark, made in Lua. It's designed for SPDM (Security Protocol Data Model), a protocol made by DMTF.
+SPDM-WiD is a dissector for Wireshark, made in Lua. It's designed for SPDM (Security Protocol Data Model), a protocol made by DMTF.
 
 ## About SPDM
 SPDM defines message exchanging and authentication between devices, including hardware identities. The protocol is made for being executed in the start of the computer, exchanging messages between PCI Express physical bus. It is a very low-level protocol.
@@ -31,22 +31,57 @@ You can check your path on the Help -> About Wireshark and then Folder menu, if 
 ### SPDM packets emulation
 You can run the bash script, it will clone the repository needed for demonstration and compile our server/sniffer/echo. You'll need gcc for this.
 
-For this, you have two options: the auto compiled demonstration (needs sudo because there are many dependencies. Maybe you're lucky to have them all) or the normal one, which just compiles the server and clones the respository.
-
-For full compilation:
+You need to use the other repository, it is important to capture the packets. This is a copy of its README, to test it:
 
 ```bash
-  chmod +x compile.sh
-  sudo ./compile.sh full
+git clone https://github.com/th-duvanel/riscv-spdm.git
 ```
+Inside riscv-spdm, follow the instructions:
 
-For just some things:
+First, you need some dependencies:
+
 ```bash
-  chmod +x compile.sh
-  ./compile.sh
+make 
+gcc 
+file 
+g++ 
+wget 
+unzip 
+cpio 
+rsync 
+bc 
+bzip2 
+cmake 
+libglib2.0-dev 
+libsdl2-dev 
+libpixman-1-dev 
+nettle-dev 
+libgtk-3-dev 
+libjemalloc-dev 
+libcap-ng-dev 
+libattr1-dev 
+libssl-dev
+parted
 ```
 
-Now, run in this order:
+```bash
+$ chmod +x *.sh
+$ . ./compile.sh
+```
+I know, it is strange to have a Makefile in the repo and you have to use a shell script. But the Git repos have to compile themselves
+individually. If not, it can cause some unexpected errors, so, use the script above.
+
+
+For the qemu emulation, you need to simulate the disk, so, use this shell script.
+```bash
+./newdisk.sh
+```
+I'm sorry for the sudo newdisk.sh inside the own shell. It is because the compilation and environemnt variables aren't the same if you're running the
+script with and without it. If you want it, you can run it separetely.
+
+# Running
+
+Now, run in this order, inside the riscv-spdm folder:
 - (1th) The sniffer (server, echo, etc.), make sure you have the 2323 TCP port on
 ```bash
 ./sniffer
@@ -57,13 +92,13 @@ sudo wireshark
 ```
 - (3th) The emulator
 ```bash
-./riscv-spdm/run.sh
+./run.sh
 ```
-
 
 ## Links
 [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/thiago-duvanel?original_referer=https%3A%2F%2Fgithub.com%2F)
 
  - [Libspdm](https://github.com/DMTF/libspdm)
- - [SPDM inside QEMU](https://github.com/offreitas/riscv-spdm)
+ - [SPDM inside QEMU (author's fork)](https://github.com/th-duvanel/riscv-spdm)
+ - [SPDM inside QEMU (original)](https://github.com/offreitas/riscv-spdm)
  - [spdmfuzzer](https://github.com/th-duvanel/spdmfuzzer)

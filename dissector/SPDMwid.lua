@@ -72,8 +72,8 @@ local reqres_types = {
 Major     = ProtoField.uint8("Major", "Major Version", base.DEC, NULL, 0xF0)
 Minor     = ProtoField.uint8("Minor", "Minor Version", base.DEC, NULL, 0xF)
 ReqRes    = ProtoField.uint8("ReqRes", "Request Response Code", base.HEX, reqres_types)
-Param1   = ProtoField.uint8("Param1", "Parameter 1")
-Param2   = ProtoField.uint8("Param2", "Parameter 2")
+Param1    = ProtoField.uint8("Param1", "Parameter 1")
+Param2    = ProtoField.uint8("Param2", "Parameter 2")
 
 Payload   = ProtoField.bytes("Payload", "Payload")
 Reserved  = ProtoField.bytes("Reserved", "Reserved ")
@@ -101,55 +101,48 @@ local PSKCAP = {
 }
 
 
-ENCRYPT_CAP = ProtoField.uint8("ENCRYPT_CAP", "Supports Encryption", base.DEC, yesno_types, 0x40)
-MAC_CAP = ProtoField.uint8("MAC_CAP", "Supports Message Authentication", base.DEC, yesno_types, 0x80)
-MUT_AUTH_CAP = ProtoField.uint8("MUT_AUTH_CAP", "Supports Mutual Authentication", base.DEC, yesno_types, 0x1)
-KEY_EX_CAP = ProtoField.uint8("KEY_EX_CAP", "Supports Key Exchange", base.DEC, yesno_types, 0x2)
-PSK_CAP = ProtoField.uint8("PSK_CAP", "Supports Pre-Shared Key", base.DEC, PSKCAP, 0xc)
-ENCAP_CAP = ProtoField.uint8("ENCAP_CAP", "Supports Encapsulation", base.DEC, yesno_types, 0x10)
-HBEAT_CAP = ProtoField.uint8("HBEAT_CAP", "Supports Heartbeat", base.DEC, yesno_types, 0x20)
-KEY_UPD_CAP = ProtoField.uint8("KEY_UPD_CAP", "Supports Key Update", base.DEC, yesno_types, 0x40)
-HANDSHAKE_IN_CAP = ProtoField.uint8("HANDSHAKE_IN_CAP", "Supports responder that only exchange messages during Handshake", base.DEC, yesno_types, 0x80)
-PUB_KEY_ID_CAP = ProtoField.uint8("PUB_KEY_ID_CAP", "Requester public key by Responder", base.DEC, yesno_types, 0x1)
+ENCRYPT_CAP                 = ProtoField.uint8("ENCRYPT_CAP", "Supports Encryption", base.DEC, yesno_types, 0x40)
+MAC_CAP                     = ProtoField.uint8("MAC_CAP", "Supports Message Authentication", base.DEC, yesno_types, 0x80)
+MUT_AUTH_CAP                = ProtoField.uint8("MUT_AUTH_CAP", "Supports Mutual Authentication", base.DEC, yesno_types, 0x1)
+KEY_EX_CAP                  = ProtoField.uint8("KEY_EX_CAP", "Supports Key Exchange", base.DEC, yesno_types, 0x2)
+PSK_CAP                     = ProtoField.uint8("PSK_CAP", "Supports Pre-Shared Key", base.DEC, PSKCAP, 0xc)
+ENCAP_CAP                   = ProtoField.uint8("ENCAP_CAP", "Supports Encapsulation", base.DEC, yesno_types, 0x10)
+HBEAT_CAP                   = ProtoField.uint8("HBEAT_CAP", "Supports Heartbeat", base.DEC, yesno_types, 0x20)
+KEY_UPD_CAP                 = ProtoField.uint8("KEY_UPD_CAP", "Supports Key Update", base.DEC, yesno_types, 0x40)
+HANDSHAKE_IN_CAP            = ProtoField.uint8("HANDSHAKE_IN_CAP", "Supports responder that only exchange messages during Handshake", base.DEC, yesno_types, 0x80)
+PUB_KEY_ID_CAP              = ProtoField.uint8("PUB_KEY_ID_CAP", "Requester public key by Responder", base.DEC, yesno_types, 0x1)
 
+CACHE_CAP                   = ProtoField.uint8("CACHE_CAP", "Supports Negotiated State Caching", base.DEC, yesno_types, 0x1)
+CERT_CAP                    = ProtoField.uint8("CERT_CAP", "Supports GET_DIGESTS and GET_CERTIFICATE", base.DEC, yesno_types, 0x2)
+CHAL_CAP                    = ProtoField.uint8("CHAL_CAP", "Supports CHALLANGE message", base.DEC, yesno_types, 0x4)
+MEAS_CAP                    = ProtoField.uint8("MEAS_CAP", "Measurement Capabilities", base.DEC, MSCAP, 0x18)
+MEAS_FRESH_CAP              = ProtoField.uint8("MEAS_FRESH_CAP", "Returns fresh Measurements", base.DEC, yesno_types, 0x20)
 
-CACHE_CAP      = ProtoField.uint8("CACHE_CAP", "Supports Negotiated State Caching", base.DEC, yesno_types, 0x1)
-CERT_CAP       = ProtoField.uint8("CERT_CAP", "Supports GET_DIGESTS and GET_CERTIFICATE", base.DEC, yesno_types, 0x2)
-CHAL_CAP       = ProtoField.uint8("CHAL_CAP", "Supports CHALLANGE message", base.DEC, yesno_types, 0x4)
-MEAS_CAP       = ProtoField.uint8("MEAS_CAP", "Measurement Capabilities", base.DEC, MSCAP, 0x18)
-MEAS_FRESH_CAP = ProtoField.uint8("MEAS_FRESH_CAP", "Returns fresh Measurements", base.DEC, yesno_types, 0x20)
-
-
-
-TPM_ALG_RSASSA_2048 = ProtoField.uint8("TPM_ALG_RSASSA_2048", "TPM_ALG_RSASSA_2048", base.DEC, yesno_types, 0x1)
-TPM_ALG_RSAPSS_2048 = ProtoField.uint8("TPM_ALG_RSAPSS_2048", "TPM_ALG_RSAPSS_2048", base.DEC, yesno_types, 0x2)
-TPM_ALG_RSASSA_3072 = ProtoField.uint8("TPM_ALG_RSASSA_3072", "TPM_ALG_RSASSA_3072", base.DEC, yesno_types, 0x4)
-TPM_ALG_RSAPSS_3072 = ProtoField.uint8("TPM_ALG_RSAPSS_3072", "TPM_ALG_RSAPSS_3072", base.DEC, yesno_types, 0x8)
+TPM_ALG_RSASSA_2048         = ProtoField.uint8("TPM_ALG_RSASSA_2048", "TPM_ALG_RSASSA_2048", base.DEC, yesno_types, 0x1)
+TPM_ALG_RSAPSS_2048         = ProtoField.uint8("TPM_ALG_RSAPSS_2048", "TPM_ALG_RSAPSS_2048", base.DEC, yesno_types, 0x2)
+TPM_ALG_RSASSA_3072         = ProtoField.uint8("TPM_ALG_RSASSA_3072", "TPM_ALG_RSASSA_3072", base.DEC, yesno_types, 0x4)
+TPM_ALG_RSAPSS_3072         = ProtoField.uint8("TPM_ALG_RSAPSS_3072", "TPM_ALG_RSAPSS_3072", base.DEC, yesno_types, 0x8)
 TPM_ALG_ECDSA_ECC_NIST_P256 = ProtoField.uint8("TPM_ALG_ECDSA_ECC_NIST_P256", "TPM_ALG_ECDSA_ECC_NIST_P256", base.DEC, yesno_types, 0x10)
-TPM_ALG_RSASSA_4096 = ProtoField.uint8("TPM_ALG_RSASSA_4096", "TPM_ALG_RSASSA_4096", base.DEC, yesno_types, 0x20)
-TPM_ALG_RSAPSS_4096 = ProtoField.uint8("TPM_ALG_RSAPSS_4096", "TPM_ALG_RSAPSS_4096", base.DEC, yesno_types, 0x40)
+TPM_ALG_RSASSA_4096         = ProtoField.uint8("TPM_ALG_RSASSA_4096", "TPM_ALG_RSASSA_4096", base.DEC, yesno_types, 0x20)
+TPM_ALG_RSAPSS_4096         = ProtoField.uint8("TPM_ALG_RSAPSS_4096", "TPM_ALG_RSAPSS_4096", base.DEC, yesno_types, 0x40)
 TPM_ALG_ECDSA_ECC_NIST_P384 = ProtoField.uint8("TPM_ALG_ECDSA_ECC_NIST_P384", "TPM_ALG_ECDSA_ECC_NIST_P384", base.DEC, yesno_types, 0x80)
 TPM_ALG_ECDSA_ECC_NIST_P521 = ProtoField.uint8("TPM_ALG_ECDSA_ECC_NIST_P521", "TPM_ALG_ECDSA_ECC_NIST_P521", base.DEC, yesno_types, 0x1)
-
-TPM_ALG_SHA_256 = ProtoField.uint8("TPM_ALG_SHA_256", "TPM_ALG_SHA_256", base.DEC, yesno_types, 0x1)
-TPM_ALG_SHA_384 = ProtoField.uint8("TPM_ALG_SHA_384", "TPM_ALG_SHA_384", base.DEC, yesno_types, 0x2)
-TPM_ALG_SHA_512 = ProtoField.uint8("TPM_ALG_SHA_512", "TPM_ALG_SHA_512", base.DEC, yesno_types, 0x4)
-TPM_ALG_SHA3_256 = ProtoField.uint8("TPM_ALG_SHA3_256", "TPM_ALG_SHA3_256", base.DEC, yesno_types, 0x8)
-TPM_ALG_SHA3_384 = ProtoField.uint8("TPM_ALG_SHA3_384", "TPM_ALG_SHA3_384", base.DEC, yesno_types, 0x10)
-TPM_ALG_SHA3_512 = ProtoField.uint8("TPM_ALG_SHA3_512", "TPM_ALG_SHA3_512", base.DEC, yesno_types, 0x20)
-
-AES_128_GCM = ProtoField.uint8("AES_128_GCM", "AES_128_GCM", base.DEC, yesno_types, 0x1)
-AES_256_GCM = ProtoField.uint8("AES_256_GCM", "AES_256_GCM", base.DEC, yesno_types, 0x2)
-CHACHA20_POLY1305 = ProtoField.uint8("CHACHA20_POLY1305", "CHACHA20_POLY1305", base.DEC, yesno_types, 0x4)
-
-Ffdhe2048 = ProtoField.uint8("Ffdhe2048", "ffdhe2048", base.DEC, yesno_types, 0x1)
-Ffdhe3072 = ProtoField.uint8("Ffdhe3072", "ffdhe3072", base.DEC, yesno_types, 0x2)
-Ffdhe4096 = ProtoField.uint8("Ffdhe4096", "ffdhe4096", base.DEC, yesno_types, 0x4)
-Secp256r1 = ProtoField.uint8("Secp256r1", "secp256r1", base.DEC, yesno_types, 0x8)
-Secp384r1 = ProtoField.uint8("Secp384r1", "secp384r1", base.DEC, yesno_types, 0x10)
-Secp521r1 = ProtoField.uint8("Secp521r1", "secp521r1", base.DEC, yesno_types, 0x20)
-
-SPDM_KEY_SCHED = ProtoField.uint8("SPDM_KEY_SCHED", "SPDM_KEY_SCHED", base.DEC, yesno_types, 0x1)
+TPM_ALG_SHA_256             = ProtoField.uint8("TPM_ALG_SHA_256", "TPM_ALG_SHA_256", base.DEC, yesno_types, 0x1)
+TPM_ALG_SHA_384             = ProtoField.uint8("TPM_ALG_SHA_384", "TPM_ALG_SHA_384", base.DEC, yesno_types, 0x2)
+TPM_ALG_SHA_512             = ProtoField.uint8("TPM_ALG_SHA_512", "TPM_ALG_SHA_512", base.DEC, yesno_types, 0x4)
+TPM_ALG_SHA3_256            = ProtoField.uint8("TPM_ALG_SHA3_256", "TPM_ALG_SHA3_256", base.DEC, yesno_types, 0x8)
+TPM_ALG_SHA3_384            = ProtoField.uint8("TPM_ALG_SHA3_384", "TPM_ALG_SHA3_384", base.DEC, yesno_types, 0x10)
+TPM_ALG_SHA3_512            = ProtoField.uint8("TPM_ALG_SHA3_512", "TPM_ALG_SHA3_512", base.DEC, yesno_types, 0x20)
+AES_128_GCM                 = ProtoField.uint8("AES_128_GCM", "AES_128_GCM", base.DEC, yesno_types, 0x1)
+AES_256_GCM                 = ProtoField.uint8("AES_256_GCM", "AES_256_GCM", base.DEC, yesno_types, 0x2)
+CHACHA20_POLY1305           = ProtoField.uint8("CHACHA20_POLY1305", "CHACHA20_POLY1305", base.DEC, yesno_types, 0x4)
+Ffdhe2048                   = ProtoField.uint8("Ffdhe2048", "ffdhe2048", base.DEC, yesno_types, 0x1)
+Ffdhe3072                   = ProtoField.uint8("Ffdhe3072", "ffdhe3072", base.DEC, yesno_types, 0x2)
+Ffdhe4096                   = ProtoField.uint8("Ffdhe4096", "ffdhe4096", base.DEC, yesno_types, 0x4)
+Secp256r1                   = ProtoField.uint8("Secp256r1", "secp256r1", base.DEC, yesno_types, 0x8)
+Secp384r1                   = ProtoField.uint8("Secp384r1", "secp384r1", base.DEC, yesno_types, 0x10)
+Secp521r1                   = ProtoField.uint8("Secp521r1", "secp521r1", base.DEC, yesno_types, 0x20)
+SPDM_KEY_SCHED              = ProtoField.uint8("SPDM_KEY_SCHED", "SPDM_KEY_SCHED", base.DEC, yesno_types, 0x1)
 
 local AlgTypes = {
     [2] = "DHE",
@@ -209,76 +202,76 @@ local MutAuth = {
 }
 
 
-Length   = ProtoField.uint32("Length", "Length", base.DEC) 
-MSpecs   = ProtoField.uint8("MSpecs", "Measurement Specification")
-ExtAsyC     = ProtoField.uint8("ExtAsyC", "Number of supported extended key algorithms")
-ExtHshC     = ProtoField.uint8("ExtHshC", "Number of supported extended hashing algorithms")
-ExtAsym     = ProtoField.uint32("ExtAsym", "Supported key algorithm")
-ExtHsh      = ProtoField.uint32("ExtHsh", "Supported hashing algorithm")
+Length              = ProtoField.uint32("Length", "Length", base.DEC) 
+MSpecs              = ProtoField.uint8("MSpecs", "Measurement Specification")
+ExtAsyC             = ProtoField.uint8("ExtAsyC", "Number of supported extended key algorithms")
+ExtHshC             = ProtoField.uint8("ExtHshC", "Number of supported extended hashing algorithms")
+ExtAsym             = ProtoField.uint32("ExtAsym", "Supported key algorithm")
+ExtHsh              = ProtoField.uint32("ExtHsh", "Supported hashing algorithm")
 
-AlgType  = ProtoField.uint8("AlgType", "Algorithm Type", base.HEX, AlgTypes)
-AlgSup   = ProtoField.bytes("AlgSup", "Supported algorithms")
-AlgExt   = ProtoField.bytes("AlgExt", "Extended supported algorithms")
-EAlgCount = ProtoField.uint8("ExtAlgCount", "Number of extended supported algorithms", base.DEC, NULL, 15)
-FAlgCount = ProtoField.uint8("FixedAlgCount", "Number of fixed supported algorithms", base.DEC, NULL, 240)
+AlgType             = ProtoField.uint8("AlgType", "Algorithm Type", base.HEX, AlgTypes)
+AlgSup              = ProtoField.bytes("AlgSup", "Supported algorithms")
+AlgExt              = ProtoField.bytes("AlgExt", "Extended supported algorithms")
+EAlgCount           = ProtoField.uint8("ExtAlgCount", "Number of extended supported algorithms", base.DEC, NULL, 15)
+FAlgCount           = ProtoField.uint8("FixedAlgCount", "Number of fixed supported algorithms", base.DEC, NULL, 240)
 
-BaseSymSel = ProtoField.uint32("BaseSymSel", "Selected key signature algorithm", base.DEC, BSymAlgo)
-BaseHshSel = ProtoField.uint32("BaseHshSel", "Selected hashing algorithm", base.DEC, BHshAlgo)
-ExtAsySelC = ProtoField.uint8("ExtAsySelC", "Number of selected key algorithms")
-ExtHshSelC = ProtoField.uint8("ExtHshSelC", "Number of selected hashing algorithms")
+BaseSymSel          = ProtoField.uint32("BaseSymSel", "Selected key signature algorithm", base.DEC, BSymAlgo)
+BaseHshSel          = ProtoField.uint32("BaseHshSel", "Selected hashing algorithm", base.DEC, BHshAlgo)
+ExtAsySelC          = ProtoField.uint8("ExtAsySelC", "Number of selected key algorithms")
+ExtHshSelC          = ProtoField.uint8("ExtHshSelC", "Number of selected hashing algorithms")
 
-Quantity = ProtoField.uint8("Quantity", "Quantity of digests (n)", base.DEC)
-DigSize = ProtoField.uint8("DigSize", "Size of each digest (H)", base.DEC)
-Digest = ProtoField.bytes("Digest", "Digest")
+Quantity            = ProtoField.uint8("Quantity", "Quantity of digests (n)", base.DEC)
+DigSize             = ProtoField.uint8("DigSize", "Size of each digest (H)", base.DEC)
+Digest              = ProtoField.bytes("Digest", "Digest")
 
-Offset = ProtoField.uint16("Offset", "Offset to the message start", base.DEC)
-WhichCert = ProtoField.uint8("WhichCert", "Certificate slot", base.DEC)
+Offset              = ProtoField.uint16("Offset", "Offset to the message start", base.DEC)
+WhichCert           = ProtoField.uint8("WhichCert", "Certificate slot", base.DEC)
 
-PortionLength = ProtoField.uint16("PortionLength", "Length of the portion", base.DEC)
-RemLength = ProtoField.uint16("RemLength", "Remaining length", base.DEC)
+PortionLength       = ProtoField.uint16("PortionLength", "Length of the portion", base.DEC)
+RemLength           = ProtoField.uint16("RemLength", "Remaining length", base.DEC)
 
-CertChain = ProtoField.bytes("CertChain", "Certificate Chain")
-RootHash = ProtoField.bytes("RootHash", "Root Hash")
-Certificate = ProtoField.bytes("Certificate", "Certificate")
+CertChain           = ProtoField.bytes("CertChain", "Certificate Chain")
+RootHash            = ProtoField.bytes("RootHash", "Root Hash")
+Certificate         = ProtoField.bytes("Certificate", "Certificate")
 
-Nonce = ProtoField.bytes("Nonce", "Nonce")
-HshType = ProtoField.uint8("HshType", "Hash Type", base.DEC, SumHshTypes)
-RequestAttb = ProtoField.uint8("RequestAttb", "Request Attributes", base.DEC, ReqAttributes)
-NBlocks = ProtoField.uint8("NBlocks", "Number of measurement blocks", base.DEC)
-MRecLen = ProtoField.uint32("MRecLen", "Measurement Record Length")
+Nonce               = ProtoField.bytes("Nonce", "Nonce")
+HshType             = ProtoField.uint8("HshType", "Hash Type", base.DEC, SumHshTypes)
+RequestAttb         = ProtoField.uint8("RequestAttb", "Request Attributes", base.DEC, ReqAttributes)
+NBlocks             = ProtoField.uint8("NBlocks", "Number of measurement blocks", base.DEC)
+MRecLen             = ProtoField.uint32("MRecLen", "Measurement Record Length")
 
-Index = ProtoField.uint8("Index", "Index")
-MSize = ProtoField.uint16("MSize", "Measurement Size")
-SlotIDParam = ProtoField.uint8("SlotIDParam", "Slot ID Parameter", base.DEC, NULL, 0xF)
-Measurement = ProtoField.bytes("Measurement", "Measurement")
+Index               = ProtoField.uint8("Index", "Index")
+MSize               = ProtoField.uint16("MSize", "Measurement Size")
+SlotIDParam         = ProtoField.uint8("SlotIDParam", "Slot ID Parameter", base.DEC, NULL, 0xF)
+Measurement         = ProtoField.bytes("Measurement", "Measurement")
 
-DMTFHash = ProtoField.uint8("DMTFHash", "DMTF Hash", base.DEC, DMTFHsh, 0x80)
-DMTFMes = ProtoField.uint8("DMTFMes", "DMTF Measurement", base.DEC, DMTFMes, 0x7F)
-DMTFSize = ProtoField.uint16("DMTFSize", "DMTF Size")
-DMTFMes = ProtoField.bytes("DMTFMes", "DMTF Measurement")
+DMTFHash            = ProtoField.uint8("DMTFHash", "DMTF Hash", base.DEC, DMTFHsh, 0x80)
+DMTFMes             = ProtoField.uint8("DMTFMes", "DMTF Measurement", base.DEC, DMTFMes, 0x7F)
+DMTFSize            = ProtoField.uint16("DMTFSize", "DMTF Size")
+DMTFMes             = ProtoField.bytes("DMTFMes", "DMTF Measurement")
 
-CChainHsh = ProtoField.bytes("CChainHsh", "Certificate Chain Hash")
-MSumHsh = ProtoField.bytes("MSumHsh", "Measurement Summary Hash")
-OpaqueL = ProtoField.uint16("OpaqueL", "Length of the opaque data", base.DEC)
-OpaqueD = ProtoField.bytes("OpaqueD", "Opaque Data")
-Signature = ProtoField.bytes("Signature", "Signature")
+CChainHsh           = ProtoField.bytes("CChainHsh", "Certificate Chain Hash")
+MSumHsh             = ProtoField.bytes("MSumHsh", "Measurement Summary Hash")
+OpaqueL             = ProtoField.uint16("OpaqueL", "Length of the opaque data", base.DEC)
+OpaqueD             = ProtoField.bytes("OpaqueD", "Opaque Data")
+Signature           = ProtoField.bytes("Signature", "Signature")
 
-ReqSessionID = ProtoField.uint16("ReqSessionID", "Requester Session ID", base.DEC)
-RandomData = ProtoField.bytes("RandomData", "Request provided random Data")
-ExcData = ProtoField.bytes("ExcData", "Exchange Data")
+ReqSessionID        = ProtoField.uint16("ReqSessionID", "Requester Session ID", base.DEC)
+RandomData          = ProtoField.bytes("RandomData", "Request provided random Data")
+ExcData             = ProtoField.bytes("ExcData", "Exchange Data")
 RequesterVerifyData = ProtoField.bytes("RequesterVerifyData", "Requester Verify Data")
 
-ReqCode = ProtoField.uint8("ReqCode", "Request Code", base.DEC)
-Token = ProtoField.uint8("Token", "Token", base.DEC)
+ReqCode             = ProtoField.uint8("ReqCode", "Request Code", base.DEC)
+Token               = ProtoField.uint8("Token", "Token", base.DEC)
 
-StandardID = ProtoField.uint16("StandardID", "Standard ID", base.DEC)
-VendorID = ProtoField.bytes("VendorID", "Vendor ID", base.DEC)
-ReqLength = ProtoField.uint16("ReqLength", "Request Length", base.DEC)
-VendorPayload = ProtoField.bytes("VendorPayload", "Vendor Payload")
+StandardID          = ProtoField.uint16("StandardID", "Standard ID", base.DEC)
+VendorID            = ProtoField.bytes("VendorID", "Vendor ID", base.DEC)
+ReqLength           = ProtoField.uint16("ReqLength", "Request Length", base.DEC)
+VendorPayload       = ProtoField.bytes("VendorPayload", "Vendor Payload")
 
-HeartbeatPeriod = ProtoField.uint8("HeartbeatPeriod", "Heartbeat Period", base.DEC)
-RspSessionID = ProtoField.uint16("RspSessionID", "Responder Session ID", base.DEC)
-MutAuthReq = ProtoField.uint8("MutAuthReq", "Mutual Authentication Request", base.DEC, MutAuth)
+HeartbeatPeriod     = ProtoField.uint8("HeartbeatPeriod", "Heartbeat Period", base.DEC)
+RspSessionID        = ProtoField.uint16("RspSessionID", "Responder Session ID", base.DEC)
+MutAuthReq          = ProtoField.uint8("MutAuthReq", "Mutual Authentication Request", base.DEC, MutAuth)
 ResponderVerifyData = ProtoField.bytes("ResponderVerifyData", "Responder Verify Data")
 
 
@@ -290,7 +283,7 @@ spdm.fields = {
     Param2,
     Payload,
 
-    -- Version --
+    -- VERSION --
     Reserved,
     VNumCount,
     MajorV,
@@ -299,7 +292,7 @@ spdm.fields = {
     Alpha,
 
 
-    -- Get Capabilities and Capabilities--
+    -- GET_CAPABILITIES --
     CTExp,
     CACHE_CAP,
     CERT_CAP,
@@ -317,7 +310,7 @@ spdm.fields = {
     HANDSHAKE_IN_CAP,
     PUB_KEY_ID_CAP,
 
-    -- Algorithms --
+    -- ALGORITHMS --
     TPM_ALG_RSASSA_2048,
     TPM_ALG_RSAPSS_2048,
     TPM_ALG_RSASSA_3072,
@@ -333,19 +326,22 @@ spdm.fields = {
     TPM_ALG_SHA3_256,
     TPM_ALG_SHA3_384,
     TPM_ALG_SHA3_512,
+
     AES_128_GCM,
     AES_256_GCM,
     CHACHA20_POLY1305,
+
     Ffdhe2048,
     Ffdhe3072,
     Ffdhe4096,
     Secp256r1,
     Secp384r1,
     Secp521r1,
+
     SPDM_KEY_SCHED,
 
 
-    -- Neg Algorithms --
+    -- NEGOTIATE_ALGORITHMS --
     Length,
     MSpecs,
     ExtAsyC,
@@ -359,88 +355,88 @@ spdm.fields = {
     EAlgCount,
     FAlgCount,
 
-    -- Algorithms --
+    -- ALGORITHMS --
     BaseSymSel,
     BaseHshSel,
     ExtAsySelC,
     ExtHshSelC,
 
-    -- Digests --
+    -- DIGESTS --
     Quantity,
     DigSize,
     Digest,
 
-    -- Get Cert --
+    -- GET_CERTIFICATE --
     Offset,
     WhichCert,
 
-    -- Cert --
+    -- CERTIFICATE --
     PortionLength,
     RemLength,
     CertChain,
 
-    -- Cert Chain --
+    -- CERTIFICIATE CHAIN --
     RootHash,
     Certificate,
 
-    -- Challange --
+    -- CHALLENGE --
     Nonce,
     HshType,
 
-    -- Challange Auth --
+    -- CHALLENGE_AUTH --
     CChainHsh,
     MSumHsh,
     OpaqueL,
     OpaqueD,
     Signature,
 
-    -- Get Measurements --
+    -- GET_MEASUREMENTS --
     RequestAttb,
 
-    -- Measurements --
+    -- MEASUREMENTS --
     NBlocks,
     MRecLen,
     SlotIDParam,
 
-    -- Measurement block --
+    -- MEASUREMENTS BLOCK --
     Index,
     MSize,
     Measurement,
 
-    -- DMTF Measurement --
+    -- DMTF MEASUREMENTS --
     DMTFHash,
     DMTFMes,
     DMTFSize,
     DMTFMes,
 
-    -- Error --
+    -- ERROR --
     ExtErrorData,
 
 
-    -- Respond If Ready --
+    -- RESPOND_IF_READY --
     ReqCode,
     Token,
 
-    -- Vendor Defined --
+    -- VENDOR_DEFINED_REQUEST --
     StandardID,
     VendorID,
     ReqLength,
     VendorPayload,
 
-    -- Key Exchange --
+    -- KEY_EXCHANGE --
     ReqSessionID,
     RandomData,
     ExcData,
     RequesterVerifyData,
 
 
-    -- Key Enchange Response --
+    -- KEY_EXCHANGE_RSP --
     HeartbeatPeriod,
     RspSessionID,
     MutAuthReq,
     ResponderVerifyData,
 
-    -- globals --
+    -- GLOBAL VARIABLES --
     H,  -- Hash selected size in ALGORITHMS --
     S,  -- Signature algorithm selected size in ALGORITHMS --
 
@@ -457,8 +453,6 @@ C = 0
 
 LenChain = 0
 Chain = ""
-
--- Global variables for SPDM --
 
 function countSetBits(byte)
     local count = 0
