@@ -2,6 +2,11 @@
 
 local mctp = Proto("MCTP-TCP", "Management Component Transport Protocol")
 
+local yesno_types = {
+    [0] = "No",
+    [1] = "Yes"
+}
+
 Header      = ProtoField.bytes("Header", "Physical Medium-Specific Header")
 RSVD        = ProtoField.uint8("RSVD", "Reserved", base.DEC, NULL, 0xF)
 HDR_Version = ProtoField.uint8("HDR_Version", "Header Version", base.DEC, NULL, 0xF0)
@@ -29,12 +34,6 @@ mctp.fields = {
     IC,
     Type
 }
-
-local yesno_types = {
-    [0] = "No",
-    [1] = "Yes"
-}
-
 
 -- SPDM --
 
@@ -85,6 +84,7 @@ UVNum     = ProtoField.uint8("UVNum","Update Version Number", base.HEX, NULL, 0x
 Alpha     = ProtoField.uint8("Alpha", "Alpha", base.HEX, NULL, 0xF)
 
 CTExp = ProtoField.uint8("CTExp", "CT Expoent")
+
 
 local MSCAP = {
     [0] = "Not Supported",
@@ -201,7 +201,6 @@ local MutAuth = {
     [0x3] = "Mutual authentication with implicit GET_DIGESTS"
 }
 
-
 Length              = ProtoField.uint32("Length", "Length", base.DEC) 
 MSpecs              = ProtoField.uint8("MSpecs", "Measurement Specification")
 ExtAsyC             = ProtoField.uint8("ExtAsyC", "Number of supported extended key algorithms")
@@ -248,7 +247,6 @@ Measurement         = ProtoField.bytes("Measurement", "Measurement")
 DMTFHash            = ProtoField.uint8("DMTFHash", "DMTF Hash", base.DEC, DMTFHsh, 0x80)
 DMTFMes             = ProtoField.uint8("DMTFMes", "DMTF Measurement", base.DEC, DMTFMes, 0x7F)
 DMTFSize            = ProtoField.uint16("DMTFSize", "DMTF Size")
-DMTFMes             = ProtoField.bytes("DMTFMes", "DMTF Measurement")
 
 CChainHsh           = ProtoField.bytes("CChainHsh", "Certificate Chain Hash")
 MSumHsh             = ProtoField.bytes("MSumHsh", "Measurement Summary Hash")
@@ -265,7 +263,7 @@ ReqCode             = ProtoField.uint8("ReqCode", "Request Code", base.DEC)
 Token               = ProtoField.uint8("Token", "Token", base.DEC)
 
 StandardID          = ProtoField.uint16("StandardID", "Standard ID", base.DEC)
-VendorID            = ProtoField.bytes("VendorID", "Vendor ID", base.DEC)
+VendorID            = ProtoField.bytes("VendorID", "Vendor ID")
 ReqLength           = ProtoField.uint16("ReqLength", "Request Length", base.DEC)
 VendorPayload       = ProtoField.bytes("VendorPayload", "Vendor Payload")
 
@@ -369,7 +367,7 @@ spdm.fields = {
     -- GET_CERTIFICATE --
     Offset,
     WhichCert,
-
+ 
     -- CERTIFICATE --
     PortionLength,
     RemLength,
@@ -397,7 +395,7 @@ spdm.fields = {
     NBlocks,
     MRecLen,
     SlotIDParam,
-
+ 
     -- MEASUREMENTS BLOCK --
     Index,
     MSize,
@@ -407,8 +405,8 @@ spdm.fields = {
     DMTFHash,
     DMTFMes,
     DMTFSize,
-    DMTFMes,
-
+ 
+ 
     -- ERROR --
     ExtErrorData,
 
@@ -450,9 +448,8 @@ spdm.fields = {
 
 D = 0
 C = 0
-
-LenChain = 0
 Chain = ""
+LenChain = 0
 
 function countSetBits(byte)
     local count = 0
@@ -778,31 +775,35 @@ function spdm.dissector(buffer, pinfo, tree)
                 cert:add_le(RemLength, buffer(begin + 2, 2))
                 cert:add(CertChain, buffer(begin + 4, pLength))
 
-                local tbt = tvb(buffer(begin + 4, pLength))
-                print(tbt)
+                local i
 
-                Chain = Chain .. tostring(buffer(begin + 4, pLength))
+                for i = 0, pLength, 36 do
+                    if i + 36 > pLength then
+                        Chain = Chain .. tostring(buffer(begin + 4 + i, pLength - i))
+                    else
+                        Chain = Chain .. tostring(buffer(begin + 4 + i, 36))
+                    end
+                end
                 LenChain = LenChain + pLength
+
 
                 if rLength ~= 0 then
                     pinfo.cols.info = "Respond: CERTIFICATE (PART) " .. tostring(p1) .. "th chain"
-                else             
+                elseif LenChain ~= 0 then            
                     pinfo.cols.info = "Respond: CERTIFICATE (FULL) " .. tostring(p1) .. "th chain"
 
                     local Aux = ByteArray.new(Chain)
                     local tvb = ByteArray.tvb(Aux, "Certificate Chain")
-                    --print(Chain)
-                    --print(Chain:len())   
-                    --print("\n\n")
 
-                    local cert_chain = subtree_2:add(spdm, buffer(begin + 4, pLength), "Certificate Chain")
+                    local cert_chain = subtree_2:add(spdm, tvb(0, LenChain), "Certificate Chain")
 
-                    cert_chain:add(Length, Aux:le_uint(0, 2))
-                    cert_chain:add(Reserved, Aux:le_uint(2, 2))
-                    cert_chain:add(RootHash, Aux:raw(4, H))
-                    cert_chain:add(Certificate, Aux:raw(4 + H, LenChain - 4 - H))
+                    cert_chain:add_le(Length, tvb(0, 2))
+                    cert_chain:add_le(Reserved,tvb(2, 2))
+                    cert_chain:add_le(RootHash, tvb(4, H))
+                    cert_chain:add_le(Certificate, tvb(4 + H, LenChain - 4 - H))
 
                     Chain = ""
+                    LenChain = 0
                 end
 
             elseif info == 0x03 then
