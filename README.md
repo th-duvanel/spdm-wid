@@ -23,7 +23,7 @@ For your luck, this repo comes with an already made implementation!
 Wireshark has two paths for plugins: personal and global plugins. I would recommend putting our dissector on the global ones, in my system, the path is this one:
 
 ```bash
-sudo cp SPDM-wid.lua /usr/lib/x86_64-linux-gnu/wireshark/plugins/SPDM-wid.lua
+sudo cp dissector/SPDMwid.lua /usr/lib/x86_64-linux-gnu/wireshark/plugins/SPDMwid.lua
 ```
 
 You can check your path on the Help -> About Wireshark and then Folder menu, if you click twice on the path, it will appear on your file manager. Just drop it there.
