@@ -66,7 +66,8 @@ parted
 
 ```bash
 $ chmod +x *.sh
-$ . ./compile.sh
+$ . ./env.sh
+$ ./compile.sh
 ```
 I know, it is strange to have a Makefile in the repo and you have to use a shell script. But the Git repos have to compile themselves
 individually. If not, it can cause some unexpected errors, so, use the script above.
