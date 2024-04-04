@@ -8,15 +8,15 @@ local yesno_types = {
 }
 
 Header      = ProtoField.bytes("Header", "Physical Medium-Specific Header")
-RSVD        = ProtoField.uint8("RSVD", "Reserved", base.DEC, NULL, 0xF)
-HDR_Version = ProtoField.uint8("HDR_Version", "Header Version", base.DEC, NULL, 0xF0)
+RSVD        = ProtoField.uint8("RSVD", "Reserved", base.DEC, NULL, 0xF0)
+HDR_Version = ProtoField.uint8("HDR_Version", "Header Version", base.DEC, NULL, 0xF)
 Dest_ID     = ProtoField.uint8("Dest_ID", "Destination ID")
 Src_ID      = ProtoField.uint8("Src_ID", "Source ID")
-SOM         = ProtoField.uint8("SOM", "First Packet", base.DEC, yesno_types, 0x1)
-EOM         = ProtoField.uint8("EOM", "Last Packet", base.DEC, yesno_types, 0x2)
-Pkt_SQ      = ProtoField.uint8("Pkt_SQ", "Packet sequence numer", base.DEC, NULL, 0xC)
-TO          = ProtoField.uint8("TO", "Tag Owner", base.DEC, yesno_types, 0x10)
-Tag         = ProtoField.uint8("Tag", "Message Tag", base.DEC, NULL, 0xE0)
+SOM         = ProtoField.uint8("SOM", "First Packet", base.DEC, yesno_types, 0x80)
+EOM         = ProtoField.uint8("EOM", "Last Packet", base.DEC, yesno_types, 0x40)
+Pkt_SQ      = ProtoField.uint8("Pkt_SQ", "Packet sequence numer", base.DEC, NULL, 0x30)
+TO          = ProtoField.uint8("TO", "Tag Owner", base.DEC, yesno_types, 0x8)
+Tag         = ProtoField.uint8("Tag", "Message Tag", base.DEC, NULL, 0x7)
 IC          = ProtoField.uint8("IC", "Check bit", base.DEC, yesno_types, 0x80)
 Type        = ProtoField.uint8("Type", "Message Type", base.DEC, NULL, 0x7F)
 
@@ -463,40 +463,41 @@ end
 
 function spdm.dissector(buffer, pinfo, tree)
     local length = buffer:len()
-    --if length < 4 then return end -- Verificação de comprimento mínimo do cabeçalho
+    if length < 4 then return end -- Verificação de comprimento mínimo do cabeçalho
+    
+    local header_length
 
-    --local subtree_1 = tree:add(mctp, buffer(), "Management Component Transport Protocol Data")
-    --
-    --subtree_1:add(Header, buffer(0, 4))
-    --if length == 4 then 
-    --    pinfo.cols.protocol = mctp.name
-    --    pinfo.cols.info = "Physical-Media Header"
-    --    return 
-    --end
+    if buffer(0, 4):uint() == 0x1 then
+        local subtree_1 = tree:add(mctp, buffer, "Management Component Transport Protocol Data")
 
+        subtree_1:add(Header, buffer(0, 4))
+        if length == 4 then
+            pinfo.cols.protocol = mctp.name
+            pinfo.cols.info = "Physical-Media Header"
+            return
+        else
+            subtree_1:add(RSVD, buffer(4, 1))
+            subtree_1:add(HDR_Version, buffer(4, 1))
+            subtree_1:add(Dest_ID, buffer(5, 1))
+            subtree_1:add(Src_ID, buffer(6, 1))
+    
+            subtree_1:add(SOM, buffer(7, 1))
+            subtree_1:add(EOM, buffer(7, 1))
+            subtree_1:add(Pkt_SQ, buffer(7, 1))
+            subtree_1:add(TO, buffer(7, 1))
+            subtree_1:add(Tag, buffer(7, 1))
+            subtree_1:add(IC, buffer(8, 1))
+            subtree_1:add(Type, buffer(8, 1))
+        end
+        header_length = 4
+    else
+        header_length = -4
+    end
 
     pinfo.cols.protocol = spdm.name
 
-
-    --subtree_1:add(RSVD, buffer(4, 1))
-
-    local header_length = -4
     if length >= header_length + 2 then
-        --local flags = buffer(header_length, 1):uint()
-        --subtree_1:add(Dest_ID, buffer(header_length + 1, 1))
-        --subtree_1:add(Src_ID, buffer(header_length + 2, 1))
-
-        --subtree_1:add(SOM, buffer(header_length + 3, 1))
-        --subtree_1:add(EOM, buffer(header_length + 3, 1))
-        --subtree_1:add(Pkt_SQ, buffer(header_length + 3, 1))
-        --subtree_1:add(TO, buffer(header_length + 3, 1))
-        --subtree_1:add(Tag, buffer(header_length + 3, 1))
-
-        local subtree_1 = tree:add(mctp, buffer(0, 1), "Management Component Transport Protocol Data")
         local subtree_2 = tree:add(spdm, buffer(1, length - 1), "Security Protocol Data Model")
-
-        subtree_1:add(IC, buffer(header_length + 4, 1))
-        subtree_1:add(Type, buffer(header_length + 4, 1))
 
         -- checa se mensagem é do tipo SPDM --
         if buffer(header_length + 4, 1):uint() == 5 then
@@ -1136,4 +1137,3 @@ end
 
 local tcp_port = DissectorTable.get("tcp.port")
 tcp_port:add(2323, spdm)
-
