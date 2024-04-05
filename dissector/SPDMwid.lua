@@ -252,7 +252,9 @@ Certificate         = ProtoField.bytes("Certificate", "Certificate")
 
 Nonce               = ProtoField.bytes("Nonce", "Nonce")
 HshType             = ProtoField.uint8("HshType", "Hash Type", base.DEC, SumHshTypes)
-RequestAttb         = ProtoField.uint8("RequestAttb", "Request Attributes", base.DEC, ReqAttributes)
+RequestAttb         = ProtoField.uint8("RequestAttb", "Request Attributes", base.DEC, ReqAttributes, 0x1)
+MeasurementOp       = ProtoField.uint8("MeasurementOp", "Measurement Operation", base.DEC)
+
 NBlocks             = ProtoField.uint8("NBlocks", "Number of measurement blocks", base.DEC)
 MRecLen             = ProtoField.uint32("MRecLen", "Measurement Record Length")
 
@@ -414,6 +416,7 @@ spdm.fields = {
 
     -- GET_MEASUREMENTS --
     RequestAttb,
+    MeasurementOp,
 
     -- MEASUREMENTS --
     NBlocks,
@@ -499,16 +502,16 @@ function spdm.dissector(buffer, pinfo, tree)
     local is_spdm = 0
 
     if buffer(0, 4):uint() == 0x1 then
-        local subtree_1 = tree:add(mctp, buffer, "Management Component Transport Protocol Data")
-
-        subtree_1:add(Header, buffer(0, 4))
 
         if length == 4 then
+            local subtree_1 = tree:add(mctp, buffer(0, 4), "Management Component Transport Protocol Data")
+            subtree_1:add(Header, buffer(0, 4))
             pinfo.cols.protocol = mctp.name
             pinfo.cols.info     = "Physical-Media Header"
 
             return
         else
+            local subtree_1 = tree:add(mctp, buffer(0, 9), "Management Component Transport Protocol Data")
             subtree_1:add(RSVD,         buffer(4, 1))
             subtree_1:add(HDR_Version,  buffer(4, 1))
             subtree_1:add(Dest_ID,      buffer(5, 1))
@@ -523,7 +526,10 @@ function spdm.dissector(buffer, pinfo, tree)
             subtree_1:add(Type,         buffer(8, 1))
         end
         header_length = 9
-    else
+    elseif bit.band(buffer(0, 1):uint(), 0x7F) == 0x5 then
+        local subtree_1 = tree:add(mctp, buffer(0, 1), "Management Component Transport Protocol Data")
+
+        subtree_1:add(Type, buffer(0, 1))
         header_length = 1
     end
 
@@ -603,9 +609,16 @@ function spdm.dissector(buffer, pinfo, tree)
             pinfo.cols.info = "Request: GET_MEASUREMENTS"
 
             local get_meas = subtree_2:add(spdm, buffer(begin, length - begin), "Get Measurements Message")
-            get_meas:add(RequestAttb, p1)
-            get_meas:add(Nonce, buffer(begin, 32))
-            get_meas:add(SlotIDParam, buffer(begin + 32, 1))
+            get_meas:add(RequestAttb, buffer(begin - 2, 1))
+            get_meas:add(MeasurementOp, buffer(begin - 1, 1))
+
+            local req_attribute = buffer(begin - 2, 1):uint()
+            local mes_operation = buffer(begin - 1, 1):uint()
+
+            if req_attribute == 0x1 then    
+                get_meas:add(Nonce, buffer(begin, 32))
+                get_meas:add(SlotIDParam, buffer(begin + 32, 1))
+            end
 
         elseif info == 0xE1 then
             pinfo.cols.info = "Request: GET_CAPABILITIES"
@@ -921,15 +934,22 @@ function spdm.dissector(buffer, pinfo, tree)
                 i = i + mSize + 4
             end
 
-            local oLength = buffer(begin + 36 + blocks_len, 2):le_uint()
+            local oLength
 
-            mes:add_le(Nonce, buffer(begin + 4 + blocks_len, 32))
-            mes:add_le(OpaqueL, buffer(begin + 36 + blocks_len, 2))
+            if blocks_len == 0 then
+                oLength = buffer(begin + 4, 2):le_uint()
+            else
+                oLength = buffer(begin + 36 + blocks_len, 2):le_uint()
+            end
 
             if oLength ~= 0 then
+                mes:add_le(Nonce, buffer(begin + 4 + blocks_len, 32))
+                mes:add_le(OpaqueL, buffer(begin + 36 + blocks_len, 2))
                 mes:add_le(OpaqueD, buffer(begin + 38 + blocks_len, oLength))
+                mes:add_le(Signature, buffer(begin + 38 + blocks_len + oLength, S))
+            else
+                mes:add_le(OpaqueL, buffer(begin + 4 + blocks_len, 2))
             end
-            mes:add_le(Signature, buffer(begin + 38 + blocks_len + oLength, S))
 
         elseif info == 0x61 then
             pinfo.cols.info = "Respond: CAPABILITIES"
