@@ -8,7 +8,9 @@ SPDM defines message exchanging and authentication between devices, including ha
 So, if it's made for running in a way that we can't sniff packets with Wireshark (because we don't have access to the OS), how can we use this dissector?
 
 ## Usage
-If you're lazy, libspdm has a built-in Responder and Requester, that can emulate the packet exchange in the TCP. You can use this dissector and it will work perfectly. The only difference is that in a real simulation, it won't have the TCP bytes over SPDM, but MCTP bytes (which are the "equivalent" to TCP in our common network exchanges).
+If you're lazy, this repository comes with two pcap example file, one of them has an error, the other one has a full message exchange between a SPDM Responder and Requester, the same as used in the QEMU that will be exaplined ahead.
+
+If you're a litle bit lazy, libspdm has a built-in Responder and Requester, that can emulate the packet exchange in the TCP. You can use this dissector and it will work perfectly. The only difference is that in a real simulation, it won't have the TCP bytes over SPDM, but MCTP bytes (which are the "equivalent" to TCP in our common network exchanges).
 
 Besides that, there are many emulated implementations using SPDM for authenticating hardware. One of them is listed above, using QEMU. A way to intercept those packets its using a built-in QEMU functionality: a SLIRP, a way to access the Host (our computer) with the guest (QEMU).
 
@@ -27,12 +29,13 @@ Wireshark has two paths for plugins: personal and global plugins. I would recomm
 sudo cp dissector/SPDMwid.lua /usr/lib/x86_64-linux-gnu/wireshark/plugins/SPDMwid.lua
 ```
 
-You can check your path on the Help -> About Wireshark -> Folder menu. If you click twice on the path, it will appear on your file manager. Just drop it there.
+You can check your path on the Help -> About Wireshark -> Folder menu. If you click twice on the path, it will appear on your file manager.
+After you drop the file there, you can restart Wireshark and SPDM-WiD will work perfectly.
 
 ### SPDM packets emulation
-You can run the bash script, it will clone the repository needed for demonstration and compile our server/sniffer/echo. You'll need gcc for this.
+For organization, this repository doesn't have all the files necessary to run the emulation, because its focus is on the dissector.
 
-You need to use the other repository, it is important to capture the packets. This is a copy of its README, to test it:
+So, first of all, you will clone it from [SPDM inside QEMU](https://github.com/th-duvanel/riscv-spdm). You can follow the repo instructions or follow the ones listed ahead, but don't worry: they are the same.
 
 ```bash
 [th-duvanel@~/spdm-wid]
@@ -83,6 +86,13 @@ For the qemu emulation, you need to simulate the disk, so, use this shell script
 I'm sorry for the sudo newdisk.sh inside the own shell. It is because the compilation and environemnt variables aren't the same if you're running the
 script with and without it. If you want it, you can open the .sh and run the commands separetely.
 
+If you restart your computer, you need to run again the environemnt variables:
+
+```bash
+[th-duvanel@~/riscv-spdm]
+. ./env.sh
+```
+
 # Running
 
 Now, run in this order, inside the riscv-spdm folder:
@@ -102,7 +112,38 @@ sudo wireshark
 ./run.sh
 ```
 
-## Links
+## Possible erros
+
+Errors can occur on any type of software, principally on those ones that depends on other devs software.
+This repository happens to need a lot of dependencies, which can be malformed or not compilled properly. The script that you use to compile riscv-spdm will tell if there is something missing, like a binarie or a folder.
+
+For example:
+
+```bash
+[th-duvanel@~/spdm-wid/riscv-spdm]
+./compile.sh
+Error: riscv64-linux- wasn't found. Compile buildroot first.
+```
+
+The error above is related to the riscv64 and buildroot, one of the emulation dependencies (all dependencies are important!), so, you can try to run it again, writing:
+
+```bash
+[th-duvanel@~/spdm-wid/riscv-spdm]
+make broot
+```
+
+Now that you understood, this table will show that for each error, there is a make command.
+If a make is not enough, probably you didn't have set the environment variables properly.
+
+| Error | Recommended command |
+|----------|----------|
+| riscv64 not found!   | make broot   |
+| u-boot not found!   | make uboot   |
+| other errors   | . ./env.sh   |
+| nothing above works   | make clean, RESTART!   |
+
+
+# Links
 [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/thiago-duvanel?original_referer=https%3A%2F%2Fgithub.com%2F)
 
  - [Libspdm](https://github.com/DMTF/libspdm)
