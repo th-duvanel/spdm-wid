@@ -77,6 +77,9 @@ chmod +x *.sh
 ```
 I know, it is strange to have a Makefile in the repo and still have to use a shell script. This is because the Git repos (buildroot, qemu, etc.) have to compile themselves individually, calling recursively their own Makefiles. If compiled together, some unexpected errors can appear, so, use the script above.
 
+In compile.sh, you will compile the C binary to receive the TCP packets sent by the QEMU, so Wireshark detect them
+properly and without any inconsistency UDP can bring.
+
 
 For the qemu emulation, you need to simulate the disk, so, use this shell script.
 ```bash
